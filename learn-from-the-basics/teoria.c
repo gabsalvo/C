@@ -2664,7 +2664,8 @@ int main(int argc, char *argv[]){
     applyRealTimeSignaling();
     applyHost();
     applySocketConnect();
-    */
     applyMergeSortThread();
+    */
+
     return 0;
 }
