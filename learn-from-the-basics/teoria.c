@@ -2634,6 +2634,56 @@ int applySocketConnect(){
 }
 
 
+// Prototipo della funzione di confronto personalizzata
+// Restituisce <0 se a < b, 0 se a == b, >0 se a > b
+typedef int (*cmp_func)(const void *a, const void *b);
+
+// Funzione di ricerca binaria
+// Prende un array 'arr', la sua dimensione 'n', l'elemento da cercare 'target',
+// e un puntatore a una funzione di confronto 'cmp'
+
+int binary_search(void *arr, int n, void *target, cmp_func cmp) {
+    int low = 0;
+    int high = n - 1;
+
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        void *mid_element = (char*)arr + (mid * sizeof(*target));
+
+        int comparison = cmp(target, mid_element);
+        if (comparison == 0) {
+            return mid;
+        } else if (comparison < 0) {
+            high = mid - 1;
+        } else {
+            low = mid + 1;
+        }
+    }
+    return -1;
+}
+
+
+// Esempio di funzione di confronto per interi
+int int_cmp(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int applyBinarySearch(){
+    int arr[] = {1,2,3,4,5,6,7,8,9,10};
+    int target = 5;
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    int index = binary_search(arr, n, &target, int_cmp);
+
+    if (index != -1) {
+        printf("Elemento trovato all'indice: %d\n", index);
+    } else {
+        printf("Elemento non trovato\n");
+    }
+
+    return 0;
+}
+
 /**
  * __/\\\\\\\\\\\\\\\__/\\\\\_____/\\\__/\\\\\\\\\\\\____
  _\/\\\///////////__\/\\\\\\___\/\\\_\/\\\////////\\\__
@@ -2699,7 +2749,7 @@ int main(int argc, char *argv[]){
     applyHost();
     applySocketConnect();
     applyMergeSortThread();
+    applyBinarySearch();
     */
-
     return 0;
 }
