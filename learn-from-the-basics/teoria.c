@@ -468,6 +468,101 @@ int applyMergeSort(){
     return 0;
 }
 
+// Mergesort Con 2 threads
+
+typedef struct {
+    int *a;
+    int n;
+} MergeSort_p;
+
+void mergeThread(int a[], int na, int c[], int nc, int b[]) {
+    int ia = 0, ib = 0, ic = 0;
+
+    while (ia < na && ic < nc) {
+        if (a[ia] < c[ic]) {
+            b[ib++] = a[ia++];
+        } else {
+            b[ib++] = c[ic++];
+        }
+    }
+
+    while (ia < na) {
+        b[ib++] = a[ia++];
+    }
+
+    while (ic < nc) {
+        b[ib++] = c[ic++];
+    }
+}
+
+void* mergesortThread(void* arg) {
+    MergeSort_p* p = (MergeSort_p*)arg;
+    pthread_t t1, t2;
+
+    if (p -> n < 2) return NULL;
+
+    int n1 = p-> n / 2;
+    int n2 = p-> n - n1;
+
+    // Dividi l'array in due parti
+    MergeSort_p p1 = {.a = p->a, .n = n1};
+    MergeSort_p p2 = {.a = p->a + n1, .n = n2};
+
+    int res = pthread_create(&t1, NULL, mergesortThread, &p1);
+    if (res != 0) {
+        perror("Thread 1 creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Crea un thread per la seconda metà
+    res = pthread_create(&t2, NULL, mergesortThread, &p2);
+    if (res != 0) {
+        perror("Thread 2 creation failed");
+        exit(EXIT_FAILURE);
+    }
+
+    // Attendi che entrambi i thread completino
+    pthread_join(t1, NULL);
+    pthread_join(t2, NULL);
+
+    int *b = malloc(p->n * sizeof(int)); // Corretto sizeof(int) invece di sizeof(b)
+    if (b == NULL) {
+        perror("Malloc failed");
+        exit(EXIT_FAILURE);
+    }
+
+    merge(p->a, n1, p->a + n1, n2, b);
+
+    for (int i = 0; i < p->n; i++) {
+        p->a[i] = b[i];
+    }
+
+    free(b);
+    return NULL;
+}
+
+int applyMergeSortThread(){
+    int arr[] = {38, 27, 43, 3, 9, 82, 10};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Original Array :\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    MergeSort_p p = {.a = arr, .n = n};
+    mergesortThread(&p);
+
+    printf("Sorted Array :\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
 // Lezione 8 Significato del const char *
 
 /**
@@ -2570,5 +2665,6 @@ int main(int argc, char *argv[]){
     applyHost();
     applySocketConnect();
     */
+    applyMergeSortThread();
     return 0;
 }
