@@ -1,1 +1,1 @@
-CMakeLists.txt not found in /home/gab/C-exercises Select CMakeLists.txt
+CMakeLists.txt not found in /home/gab/C Select CMakeLists.txt
