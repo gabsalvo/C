@@ -1223,6 +1223,39 @@ int applyFwrite(){
  *
  */
 
+/**
+ * void *calloc(size_t num, size_t size);
+ *  num: Il numero di elementi da allocare.
+size: La dimensione di ciascun elemento in byte.
+Comportamento
+calloc alloca spazio in memoria per un array di num elementi, ognuno dei quali è di size byte. Differisce da malloc in quanto inizializza tutti i byte dell'area di memoria allocata a 0. Questo è particolarmente utile per:
+
+Allocazione di array di tipi integrali (come int, char, ecc.) dove si desidera che tutti gli elementi siano inizializzati a 0.
+Allocazione di array di puntatori, assicurando che tutti i puntatori siano inizializzati a NULL.
+Allocazione di strutture dati dove si desidera che tutti i campi siano inizializzati a 0 o NULL per indicare uno stato "vuoto" o "iniziale".
+ */
+
+int applyCalloc() {
+    int i;
+    // Alloca un array di 10 interi.
+    int *arr = calloc(10, sizeof(int));
+
+    if (arr == NULL) {
+        fprintf(stderr, "Allocazione fallita\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // Stampa l'array. Ogni elemento sarà 0.
+    for (i = 0; i < 10; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+
+    free(arr);
+    return 0;
+}
+
+
 // Lezione 19 Quicksort in c
 
 /**
@@ -2644,7 +2677,8 @@ int main(int argc, char *argv[]){
     applyCancellazioneLista();
     applyProcessaLinea
     applyMatrice();
-    applyQuickSort()
+    applyCalloc();
+    applyQuickSort();
     applyFork();
     applyWait();
     //applyFwrite();
